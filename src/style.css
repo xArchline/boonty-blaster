@@ -1,0 +1,118 @@
+/* One licensed weight (Black) serves every bold text; the file is not in the public repo, CI adds it from a secret. */
+@font-face { font-family: 'Delight'; src: url('/fonts/Delight-Black.woff2') format('woff2'); font-weight: 800 900; font-display: block; }
+
+:root { --lav100: #DADFFF; --lav500: #6173EB; --lav900: #3817AF; --yel200: #FEE580; --yel500: #F1BE00; --ink: #171C3B; --white: #FFF9F9; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--lav100); touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Delight', 'Arial Rounded MT Bold', system-ui, sans-serif; color: var(--white); }
+canvas { display: block; position: fixed; inset: 0; }
+[hidden] { display: none !important; }
+
+.screen {
+  position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  padding: max(24px, env(safe-area-inset-top)) 24px max(24px, env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, var(--menu-top, #7385F5), var(--menu-bottom, #3817AF));
+  text-align: center; animation: pop-in .35s cubic-bezier(.2, 1.6, .4, 1);
+  justify-content: safe center; overflow-y: auto; padding-top: max(56px, env(safe-area-inset-top));
+}
+#title { background: linear-gradient(180deg, var(--menu-top, #7385F5), var(--menu-bottom, #3817AF)); }
+.logo { width: min(50vw, 220px); }
+h1 { margin: -8px 0 0; font-size: clamp(36px, 11vw, 56px); font-weight: 900; letter-spacing: .06em; color: var(--yel200); text-shadow: 0 4px 0 var(--ink); }
+h2 { margin: 0; font-size: clamp(34px, 10vw, 52px); font-weight: 900; color: var(--yel200); text-shadow: 0 4px 0 var(--ink); }
+p { margin: 0; max-width: 22em; font-size: 16px; font-weight: 800; line-height: 1.35; }
+.hero { width: min(52vw, 230px); aspect-ratio: 1; border-radius: 50%; border: 6px solid var(--yel200); box-shadow: 0 10px 0 rgba(23,28,59,.35); animation: bob 2.4s ease-in-out infinite; }
+button {
+  margin-top: 10px; font: 900 clamp(19px, 6vw, 26px)/1 'Delight', system-ui, sans-serif; letter-spacing: .04em; color: var(--ink);
+  background: var(--yel200); border: 0; border-radius: 999px; padding: 18px clamp(24px, 8vw, 54px); box-shadow: 0 7px 0 var(--yel500), 0 12px 20px rgba(23,28,59,.3);
+  cursor: pointer; animation: pulse 1.2s ease-in-out infinite; white-space: nowrap; max-width: 100%;
+}
+button:active { transform: translateY(5px); box-shadow: 0 2px 0 var(--yel500); }
+button:focus-visible { outline: 4px solid var(--white); outline-offset: 4px; }
+
+@keyframes pop-in { from { opacity: 0; transform: scale(.9); } }
+@keyframes bob { 50% { transform: translateY(-8px) rotate(-2deg); } }
+@keyframes pulse { 50% { scale: 1.06; } }
+@media (prefers-reduced-motion: reduce) { .screen, .hero, button { animation: none; } }
+
+.mute {
+  position: fixed; z-index: 2; top: max(14px, env(safe-area-inset-top)); right: 14px; margin: 0;
+  font-size: 14px; padding: 10px 16px; animation: none; color: var(--white);
+  background: rgba(23,28,59,.45); box-shadow: none;
+}
+.mute:active { transform: none; box-shadow: none; }
+
+button.secondary {
+  margin-top: 0; font-size: 17px; padding: 12px 28px; color: var(--white); animation: none;
+  background: rgba(23,28,59,.35); box-shadow: inset 0 0 0 3px rgba(255,249,249,.5);
+}
+button.secondary:active { transform: translateY(2px); box-shadow: inset 0 0 0 3px rgba(255,249,249,.5); }
+
+.pick-label { font-size: 14px; font-weight: 900; letter-spacing: .12em; color: var(--lav100); margin-top: 6px; }
+.heroes { display: flex; gap: 6px; justify-content: center; }
+.hero-pick span { font-size: 11px; line-height: 1.1; text-align: center; }
+.hero-pick {
+  width: min(21vw, 88px); flex: none;
+  margin: 0; padding: 0; background: none; box-shadow: none; animation: none; color: var(--white);
+  display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 13px; letter-spacing: 0;
+}
+.hero-pick img { width: min(19vw, 80px); aspect-ratio: 1; border-radius: 50%; border: 5px solid rgba(255,249,249,.35); transition: transform .15s; }
+.hero-pick.selected img { border-color: var(--yel200); transform: scale(1.08); box-shadow: 0 6px 0 rgba(23,28,59,.35); }
+.hero-pick.locked img { filter: grayscale(1) brightness(.55); }
+.hero-pick.locked span { color: var(--yel200); }
+.hero-pick:active { transform: none; box-shadow: none; }
+.power { font-size: 15px; min-height: 2.6em; color: var(--yel200); }
+@media (max-height: 700px) { .logo { width: 150px; } h1 { font-size: 34px; } .screen { gap: 8px; } .hero.small { width: 90px; } p { font-size: 14px; } }
+
+.hero.small { width: min(30vw, 130px); border-width: 5px; }
+.shop { width: min(100%, 400px); display: grid; gap: 8px; }
+.gold-line { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 20px; font-weight: 900; color: var(--yel200); }
+.coin { display: inline-block; width: 1em; height: 1em; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #FFF0B5, var(--yel500) 60%, #CA8001); box-shadow: inset 0 0 0 2px #CA8001; vertical-align: -0.12em; }
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.upgrade {
+  margin: 0; animation: none; box-shadow: none; white-space: normal; text-align: left; color: var(--ink);
+  background: var(--white); border-radius: 16px; padding: 8px 10px; display: grid; gap: 2px; font-size: 13px; letter-spacing: 0;
+  border: 3px solid transparent;
+}
+.upgrade b { font-size: 14px; }
+.upgrade .fx { font-weight: 800; color: #524a70; }
+.upgrade .cost { display: flex; align-items: center; gap: 5px; font-size: 15px; font-weight: 900; }
+.upgrade.affordable { border-color: var(--yel500); }
+.upgrade.affordable .cost { color: #3817AF; }
+.upgrade:disabled { opacity: .6; }
+.upgrade:active { transform: translateY(2px); box-shadow: none; }
+.upgrade.bought { animation: pop-in .3s cubic-bezier(.2, 1.6, .4, 1); }
+.upgrade .row { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+.upgrade .lv { font-size: 12px; font-weight: 900; color: var(--lav500); background: var(--lav100); border-radius: 999px; padding: 2px 7px; white-space: nowrap; }
+.gold-line { flex-wrap: wrap; }
+
+/* Result screens: gold earned */
+.reward { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 26px; font-weight: 900; color: var(--yel200); text-shadow: 0 3px 0 var(--ink); font-variant-numeric: tabular-nums; }
+.reward .coin { box-shadow: inset 0 0 0 2px #CA8001, 0 3px 0 var(--ink); }
+.reward.big { font-size: clamp(40px, 13vw, 58px); text-shadow: 0 4px 0 var(--ink); }
+.reward.big .coin { box-shadow: inset 0 0 0 4px #CA8001, 0 4px 0 var(--ink); }
+.reward.big.pop { animation: coin-pop .45s cubic-bezier(.2, 1.8, .4, 1); }
+@keyframes coin-pop { 40% { transform: scale(1.25) rotate(-3deg); } }
+#win-sub.unlock { color: var(--yel200); }
+
+/* In-game pause button: top centre of the world, between the LEVEL pill and the hearts */
+.pause-btn {
+  position: fixed; z-index: 2; left: 50%; top: max(env(safe-area-inset-top), calc(var(--world-top, 0px) + 10px * var(--world-scale, 1)));
+  width: 44px; height: 44px; margin: 0 0 0 -22px; padding: 0; border-radius: 50%; animation: none;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  background: rgba(23,28,59,.55); box-shadow: inset 0 0 0 3px rgba(255,249,249,.6);
+}
+.pause-btn i { width: 5px; height: 16px; border-radius: 3px; background: var(--white); }
+.pause-btn:active { transform: scale(.92); box-shadow: inset 0 0 0 3px rgba(255,249,249,.6); }
+
+/* Title-screen settings gear, left of the SOUND button */
+.gear {
+  position: fixed; z-index: 2; top: max(14px, env(safe-area-inset-top)); right: 128px; margin: 0;
+  width: 40px; height: 34px; padding: 0; font-size: 22px; line-height: 34px; animation: none; color: var(--white);
+  background: rgba(23,28,59,.45); box-shadow: none; font-family: system-ui, sans-serif;
+}
+.gear:active { transform: none; box-shadow: none; }
+#settings { gap: 16px; }
+#settings .note { font-size: 14px; color: var(--lav100); max-width: 18em; }
+button.danger.armed { background: #FF4A18; box-shadow: none; animation: pulse .5s ease-in-out infinite; }
+.done { color: var(--yel200); }
+@media (prefers-reduced-motion: reduce) { .reward.big.pop, button.danger.armed { animation: none; } }

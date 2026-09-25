@@ -1,0 +1,174 @@
+<title>Boonty Game Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Figtree:wght@400;500;700&display=swap">
+<style>
+:root{
+  --ink:#1d1340; --ink2:#524a70; --paper:#faf8ff; --card:#ffffff; --line:#e4def5;
+  --accent:#6741d9; --accent-soft:#ece6ff; --sun:#ffc93c; --good:#2b8a3e; --warn:#c46b00; --bad:#c92a2a;
+  --bar:#ddd6f3;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark; --ink:#f1edff; --ink2:#b3abd1; --paper:#141024; --card:#1e1934; --line:#342c52;
+    --accent:#a68bff; --accent-soft:#2c2350; --sun:#ffd25e; --good:#69db7c; --warn:#ffb347; --bad:#ff8787; --bar:#342c52;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark; --ink:#f1edff; --ink2:#b3abd1; --paper:#141024; --card:#1e1934; --line:#342c52;
+  --accent:#a68bff; --accent-soft:#2c2350; --sun:#ffd25e; --good:#69db7c; --warn:#ffb347; --bad:#ff8787; --bar:#342c52;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:16px/1.55 Figtree,system-ui,sans-serif;padding-inline:16px;padding-block:32px 64px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:48px}
+h1,h2,h3{font-family:"Baloo 2","Arial Rounded MT Bold",system-ui,sans-serif;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:800}
+h2{font-size:1.8rem;font-weight:800}
+h3{font-size:1.55rem;font-weight:800}
+p{margin:0;max-width:65ch}
+.eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+header{display:grid;gap:14px}
+header p{color:var(--ink2);font-size:1.08rem}
+.trend{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.trend div{border-top:3px solid var(--accent);padding-top:10px;display:grid;gap:4px}
+.trend b{font-size:1rem}
+.trend span{color:var(--ink2);font-size:.95rem}
+.concepts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.concept{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:14px;display:grid;gap:12px;align-content:start}
+.concept.pick{border:3px solid var(--accent);padding:12px}
+.concept img{width:100%;aspect-ratio:1/2;object-fit:cover;border-radius:14px;display:block;background:var(--accent-soft)}
+.tag{justify-self:start;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+.pick .tag{background:var(--accent);color:#fff}
+.refs{font-size:.85rem;color:var(--ink2)}
+.concept dl{margin:0;display:grid;gap:8px}
+.concept dt{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2)}
+.concept dd{margin:0;font-size:.95rem}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.95rem}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);font-weight:700}
+tr:last-child td{border-bottom:0}
+td.name{font-weight:700;white-space:nowrap}
+.dots{display:inline-flex;gap:3px}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--bar)}
+.dots i.on{background:var(--accent)}
+.total{font-variant-numeric:tabular-nums;font-weight:700}
+.rec{display:grid;gap:14px;background:var(--accent-soft);border-radius:22px;padding:24px}
+.rec ol,.ask ol{margin:0;padding-left:1.3em;display:grid;gap:8px;max-width:70ch}
+.ask{display:grid;gap:14px}
+.note{color:var(--ink2);font-size:.9rem}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Boonty mini-game · concept round · 24 Sep 2026</span>
+    <h1>Four games we could build. Pick one.</h1>
+    <p>Each concept below is modelled on a mechanic that works in social-media game ads, redrawn with one cute Boonty mascot so you can judge the look as well as the idea. The screens are static mockups, not gameplay. Once you choose, I build a playable prototype of that one game only.</p>
+  </header>
+
+  <section class="trend" aria-label="What the market research says">
+    <div><b>Instant-read mechanics win</b><span>Ads that perform show one tap or one swipe and a visible result: gates, merges, numbers going up.</span></div>
+    <div><b>Hybrid-casual is where hits are now</b><span>A hypercasual core loop plus a light meta (coins, upgrades, unlocks) keeps players coming back.</span></div>
+    <div><b>Near-fail keeps people watching</b><span>A close call ("almost lost!") makes the next attempt feel within reach. That is the "one more try" hook.</span></div>
+  </section>
+
+  <section style="display:grid;gap:20px">
+    <h2>The concepts</h2>
+    <div class="concepts">
+      <article class="concept">
+        <span class="tag">A · Army runner</span>
+        <img src="rush.png" alt="Mockup: a purple crowd of 36 Boonty creatures runs up a road toward a +20 gate and a ×2 gate, with an enemy crowd of 45 ahead.">
+        <h3>Boonty Rush</h3>
+        <span class="refs">Like: Count Masters, Last War ads</span>
+        <dl>
+          <dt>Control</dt><dd>Drag left and right while running forward.</dd>
+          <dt>Loop (30 to 45 s)</dt><dd>Steer through + and × gates to grow your crowd, shoot what's ahead, then clash with the enemy crowd or a boss at the finish.</dd>
+          <dt>Hook</dt><dd>Big numbers every two seconds and a showdown at the end.</dd>
+          <dt>Risk</dt><dd>Once you learn that ×2 beats +20, choices go shallow and you mostly just watch. Needs a fake-3D road.</dd>
+        </dl>
+      </article>
+
+      <article class="concept pick">
+        <span class="tag">B · Recommended</span>
+        <img src="blaster.png" alt="Mockup: Boonty sits in a cannon at the bottom firing a stream of small yellow creatures through a ×3 gate toward a red enemy castle.">
+        <h3>Boonty Blaster</h3>
+        <span class="refs">Like: Mob Control</span>
+        <dl>
+          <dt>Control</dt><dd>Hold to fire a stream of little Boonties and drag to aim.</dd>
+          <dt>Loop (45 to 90 s)</dt><dd>Aim the stream through multiplier gates (×3, +10, some moving) to swarm enemy waves and knock down their castle before they reach you.</dd>
+          <dt>Hook</dt><dd>Your finger is always doing something, and one good gate turns 10 minis into 30.</dd>
+          <dt>Risk</dt><dd>Hundreds of sprites on screen at once, which canvas handles fine. Enemy waves need careful tuning.</dd>
+        </dl>
+      </article>
+
+      <article class="concept">
+        <span class="tag">C · Cute puzzle</span>
+        <img src="drop.png" alt="Mockup: cute round creatures of increasing size stacked in a jar, with a MERGE +64 popup and a next-piece preview.">
+        <h3>Boonty Drop</h3>
+        <span class="refs">Like: Suika / watermelon game</span>
+        <dl>
+          <dt>Control</dt><dd>Tap where you want to drop the next creature.</dd>
+          <dt>Loop (2 to 5 min)</dt><dd>Two identical creatures merge into the next, bigger one. Chain merges for points. You lose when the jar overflows the line.</dd>
+          <dt>Hook</dt><dd>Chain reactions and a "just one more" high score. The cutest of the four.</dd>
+          <dt>Risk</dt><dd>Very close to a famous game, and there's no power fantasy. Needs good circle physics.</dd>
+        </dl>
+      </article>
+
+      <article class="concept">
+        <span class="tag">D · Action roguelite</span>
+        <img src="survivors.png" alt="Mockup: Boonty in a meadow surrounded by enemies, with orbiting stars and a LEVEL UP screen offering three upgrade cards.">
+        <h3>Boonty Survivors</h3>
+        <span class="refs">Like: Survivor.io, Vampire Survivors</span>
+        <dl>
+          <dt>Control</dt><dd>Drag to move. Attacks fire automatically.</dd>
+          <dt>Loop (5 to 10 min)</dt><dd>Collect XP gems. Each level up offers 3 upgrade cards, and you survive growing hordes to the timer.</dd>
+          <dt>Hook</dt><dd>Building a broken combo of upgrades. The deepest long-term appeal of the four.</dd>
+          <dt>Risk</dt><dd>Biggest scope and hardest to balance. Sessions are long, and it takes more than 10 seconds to understand.</dd>
+        </dl>
+      </article>
+    </div>
+  </section>
+
+  <section style="display:grid;gap:16px">
+    <h2>How they score against the brief</h2>
+    <p class="note">Scored 1 to 5 against the priorities in CLAUDE.md: fun, then clarity, then polish, then features, with technical simplicity as a constraint. These are my estimates before anyone has played anything.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Concept</th><th>Fun potential</th><th>Clear in 10 s</th><th>Short replayable runs</th><th>Simple to build well</th><th>Fits "gates + power"</th><th>Total</th></tr></thead>
+        <tbody id="score"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="rec">
+    <span class="eyebrow">My recommendation</span>
+    <h2>Build Boonty Blaster</h2>
+    <ol>
+      <li>It's the mechanic from your brief (gates that add characters and power), and it's active: you aim and time every second instead of just steering.</li>
+      <li>It's natively 2D and top-down, so it runs smoothly on mobile browsers with no fake-3D tricks and no physics engine.</li>
+      <li>Swarms of cute Boonties pouring through a ×3 gate give us both of your directions, army power and a cute character, in one game.</li>
+      <li>Levels are 45 to 90 seconds with a clear win or lose, which suits "one more level".</li>
+    </ol>
+    <p class="note">Runner-up: <b>Boonty Drop</b>, if you'd rather have a pure cute, relaxing high-score game. It's the smallest build, but it's also the least original.</p>
+  </section>
+
+  <section class="ask">
+    <h2>What I need from you</h2>
+    <ol>
+      <li><b>Pick a concept</b> (A, B, C or D), or ask for a mix.</li>
+      <li><b>Boonty branding:</b> do you have a logo, colours or a mascot? If not, I'll carry on with the purple "Boo" creature shown here.</li>
+      <li><b>One thing to check in CLAUDE.md:</b> milestone M1 says "party loop: players, rounds, mini-games, sips". That looks like it was copied from a drinking/party game. I'll read M1 as "playable prototype of the chosen game" unless you say otherwise.</li>
+    </ol>
+  </section>
+</div>
+
+<script>
+const rows = [
+  ['A · Boonty Rush', [4,5,5,3,5]],
+  ['B · Boonty Blaster', [5,5,5,4,5]],
+  ['C · Boonty Drop', [4,5,4,4,1]],
+  ['D · Boonty Survivors', [5,3,2,2,3]],
+];
+const dots = n => '<span class="dots" aria-label="' + n + ' of 5">' + [1,2,3,4,5].map(i => '<i class="' + (i <= n ? 'on' : '') + '"></i>').join('') + '</span>';
+document.getElementById('score').innerHTML = rows.map(([n, s]) =>
+  '<tr><td class="name">' + n + '</td>' + s.map(v => '<td>' + dots(v) + '</td>').join('') + '<td class="total">' + s.reduce((a, b) => a + b) + ' / 25</td></tr>').join('');
+</script>

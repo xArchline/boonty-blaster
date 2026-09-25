@@ -1,0 +1,5 @@
+node_modules
+dist
+playtest-output
+# licensed font files: not redistributed in the public repo (CI injects them from a secret)
+public/fonts/
