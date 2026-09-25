@@ -162,7 +162,7 @@ const handmadeLate: Record<number, LevelDef> = {
     gates: [{ x: 40, y: 590, w: 170, mul: 2, speed: 70, range: 290 }, { x: 180, y: 410, w: 180, mul: 3 }],
   },
   32: {
-    ...late, finale: true, bigEvery: 4, extras: [{ kind: 'healer', every: 3 }], intro: 'HEALER GRUMPS patch up their friends. Pop them first!',
+    ...late, finale: true, bigEvery: 4, extras: [{ kind: 'healer', every: 3 }], intro: 'HEALER GRUMPS hide behind an Iron Grump and heal. Break the guard, then pop them!',
     walls: [{ x: 30, y: 500, w: 150, h: 30, hp: 90 }, { x: 360, y: 500, w: 150, h: 30, hp: 90 }],
     gates: [{ x: 190, y: 590, w: 160, mul: 2, grow: true }, { x: 60, y: 410, w: 150, mul: 3, speed: 60, range: 270 }],
   },

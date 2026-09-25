@@ -70,3 +70,8 @@ Feedback: "Strong but challenged at level 55, died once, all good. The link work
 
 ## 2026-09-25: Pause
 Laury: "l'état actuel me convient parfaitement, peut-être le menu un peu trop orienté sur le marron". Development stopped at Laury's request. Next steps are in STATUS.md (menu less brown first, then Android and ads when wanted).
+
+## 2026-09-25: Laury's level-83 feedback → M7.1
+Feedback: "Very happy. Difficulty not always even but feels right, I struggle sometimes. Big reds get hard to kill: perfect. Shield Grumps well balanced. Speed upgrade has a cap; do the others? The Healer is almost useless, killed too fast."
+- Answer: only More Boonties is capped (40 shots/s). Power, Super Charge and Extra Heart are unlimited.
+- Healer rework: it now arrives tucked behind an Iron Grump guard (same lane, follows it), has 3× a regular Grump's HP (was 2×), and heals itself too. Bots: healer levels (36, 47) got a bit harder, the others are unchanged. +1 test (36).

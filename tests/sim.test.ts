@@ -226,6 +226,19 @@ describe('sim', () => {
     expect(s.grumps[0].hp).toBeGreaterThan(5);
   });
 
+  it('Healer Grumps arrive tucked behind an Iron Grump guard', () => {
+    const s = createState(32);
+    s.gates = [];
+    for (let i = 0; i < 400 && !s.grumps.some(e => e.kind === 'healer'); i++) run(s, 0.1);
+    const h = s.grumps.find(e => e.kind === 'healer')!;
+    expect(h.guard?.kind).toBe('shield');
+    run(s, 1);
+    if (h.guard!.alive) {
+      expect(h.y).toBeLessThan(h.guard!.y); // the guard is between the healer and the cannon
+      expect(Math.abs(h.x - h.guard!.x)).toBeLessThan(10);
+    }
+  });
+
   it('Gate Carriers: pop both and the x3 gate is yours', () => {
     const s = createState(37);
     s.spawnCd = 999; s.rushCd = 999; s.carrierCd = 0;

@@ -14,7 +14,7 @@ const HOMING_Y = 330; // above this line minis curve toward the castle (not in b
 export type Hero = 'knight' | 'party' | 'crown' | 'cool';
 export interface Mini { x: number; y: number; vx: number; mask: number; alive: boolean; power: number; pierce?: number; hits?: Grump[] }
 export type GrumpKind = 'grump' | 'big' | 'zippy' | 'king' | 'splitter' | 'shield' | 'thief' | 'healer';
-export interface Grump { x: number; y: number; laneX: number; r: number; hp: number; maxHp: number; speed: number; kind: GrumpKind; alive: boolean; hitT: number; armor?: number; maxArmor?: number; target?: Gate; healCd?: number; carry?: Gate }
+export interface Grump { x: number; y: number; laneX: number; r: number; hp: number; maxHp: number; speed: number; kind: GrumpKind; alive: boolean; hitT: number; armor?: number; maxArmor?: number; target?: Gate; healCd?: number; carry?: Gate; guard?: Grump }
 export interface Gate { x: number; y: number; w: number; h: number; mul: number; speed: number; minX: number; maxX: number; dir: number; flash: number; count: number; grow: boolean; mega: boolean; lockHp: number; lockMax: number; blocked?: boolean; carriers?: number }
 export interface Wall { x: number; y: number; w: number; h: number; hp: number; maxHp: number; flash: number }
 export interface Bumper { x: number; y: number; r: number; flash: number }
@@ -119,15 +119,14 @@ const KIND = {
   splitter: { r: 21, speed: 0.75 },
   shield: { r: 16, speed: 0.85 },
   thief: { r: 15, speed: 1.1 },
-  healer: { r: 16, speed: 0.8 },
+  healer: { r: 16, speed: 0.9 },
 };
 
 function spawn(s: State, kind: GrumpKind, laneX: number, dy = 0) {
   const k = KIND[kind];
   const hp = kind === 'big' ? s.def.bigHp : kind === 'king' ? s.def.bossHp
     // special Grumps are measured in "regular Grumps", so they stay in proportion as levels scale
-    : kind === 'splitter' || kind === 'thief' ? Math.max(3, (s.def.minionHp ?? 1) * 3)
-    : kind === 'healer' ? Math.max(2, (s.def.minionHp ?? 1) * 2)
+    : kind === 'splitter' || kind === 'thief' || kind === 'healer' ? Math.max(3, (s.def.minionHp ?? 1) * 3)
     : kind === 'zippy' ? Math.max(1, (s.def.minionHp ?? 1) * 0.5) // fast OR tough, not both
     : (s.def.minionHp ?? 1);
   s.grumps.push({
@@ -182,7 +181,15 @@ function spawnGroup(s: State) {
   for (const x of d.extras ?? []) {
     if (s.groups % x.every !== 0) continue;
     if (x.kind === 'thief' && s.grumps.some(e => e.kind === 'thief' && e.alive)) continue; // one thief at a time
-    spawn(s, x.kind, randomLane(s));
+    const lane = randomLane(s);
+    if (x.kind === 'healer') {
+      // healers hide behind an Iron Grump's plank: break the guard or aim around it
+      spawn(s, 'shield', lane, 36);
+      spawn(s, 'healer', lane);
+      s.grumps[s.grumps.length - 1].guard = s.grumps[s.grumps.length - 2];
+      return;
+    }
+    spawn(s, x.kind, lane);
     return;
   }
   for (let i = 0; i < d.groupSize; i++) spawn(s, s.rand() < d.zippyChance ? 'zippy' : 'grump', randomLane(s), i * 18);
@@ -505,12 +512,17 @@ export function step(s: State, dt: number) {
       e.x += Math.sign(dx0) * Math.min(Math.abs(dx0), (e.kind === 'zippy' ? 150 : 90) * dt);
       if (e.kind === 'zippy' && Math.abs(dx0) < 2 && s.rand() < dt * 1.2) e.laneX = randomLane(s); // zig-zag
       if (e.kind === 'thief' && e.target) e.laneX = e.target.x + e.target.w / 2;
+      if (e.guard?.alive) {
+        // tucked right behind its guard
+        e.laneX = e.guard.x;
+        e.y = Math.min(e.y, e.guard.y - e.guard.r - e.r + 4);
+      }
       if (e.kind === 'healer' && (e.healCd! -= dt) <= 0) {
-        // patches up every Grump nearby once a second
+        // patches up every Grump nearby (itself included) once a second
         e.healCd = 1;
         let healed = false;
         for (const o of s.grumps) {
-          if (o === e || !o.alive || o.hp >= o.maxHp || (o.x - e.x) ** 2 + (o.y - e.y) ** 2 > 120 * 120) continue;
+          if (!o.alive || o.hp >= o.maxHp || (o.x - e.x) ** 2 + (o.y - e.y) ** 2 > 120 * 120) continue;
           o.hp = Math.min(o.maxHp, o.hp + Math.max(1, o.maxHp * 0.12));
           healed = true;
         }
