@@ -309,6 +309,8 @@ function playSounds(s: State) {
       case 'wallBreak': case 'split': audio.play('bigPop'); break;
       case 'wallHit': case 'lockHit': audio.play('castleHit', { pitch: 0.6 }); break;
       case 'unlock': audio.play('newTwist'); audio.play('bigPop'); break;
+      case 'teleport': audio.play('gate', { pitch: 0.6 }); break;
+      case 'dash': audio.play('heart', { pitch: 0.8 }); break;
       case 'wallChew': audio.play('pop', { pitch: 0.5 }); break;
       case 'bump': audio.play('click'); break;
       case 'bossDown': audio.play('bigPop'); audio.play('newTwist'); break;

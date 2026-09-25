@@ -57,6 +57,19 @@ Freeze visuals: the ice blinks during its last 0.8 s and shatters into shards wh
 | LAST STAND | banner | Below 15% castle HP, one rush + 2 Bigs, so levels end on a climax (level 17+) |
 Generated levels (18+) mix one field element (traps / grow / mega / crates / bumpers) with one enemy flavour (rush / zippy / big / splitter).
 
+## Boss duels (M6)
+The King fights alone. Every duel has a ×3 gate sliding across the whole width, so lining it up with the King is skill, not luck. Styles rotate:
+| Style | Levels | Movement | Tell |
+|---|---|---|---|
+| Classic | 5, 25, 45… | random sidesteps | none |
+| Sweeper | 10, 30… | smooth sine sway | predictable: lead your shots |
+| Charger | 15 (dash), 35… | picks a spot, then charges there fast and steps forward | red arrow for 0.55 s |
+| Trickster | 20… | blinks to a new spot | translucent ghost for 0.7 s |
+King HP = the player's (blended) firepower × 1.6 × a target length (14 s → 22 s) × a per-style factor. A casual bot with typical upgrades wins roughly 50–100%, and 5 levels of extra upgrades tip it.
+
+## Late game (M6)
+Difficulty = the geometric mean of the typical player's and the player's own firepower, × wave × (1 + (level − 12)/24). Regular Grumps' HP ≈ damage × (0.6 + level/26) × √wave, so they need more hits the further you go. Rush Grumps get half HP. Gate Carriers (37+) and Twin Lanes (42+, frequent in the short post-boss levels).
+
 ## Landscapes
 The land changes after every boss (every 5 levels) and cycles: Sunny Meadow, Sandy Beach, Autumn Forest, Snowy Hills, Desert Canyon, Candy Sunset, Firefly Garden, Lava Peaks. The playfield centre stays calm for readability, with scenery at the edges. Menus take the land's colours. A banner names each new land.
 

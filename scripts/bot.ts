@@ -7,8 +7,12 @@ export function botAim(s: State, skill = 1) {
     // farm the best gate while the King is far, go straight at him when he gets close
     const best = s.gates.reduce((a, g) => (g.mul > a.mul ? g : a), s.gates[0]);
     const k = s.king;
-    const gateNear = best && Math.abs(best.x + best.w / 2 - k.x) < 140;
-    return k.y > 430 || !gateNear ? k.x : best.x + best.w / 2;
+    // anticipate like a human: lead the Sweeper, aim at the telegraphed spot of the Charger / Trickster
+    const style = s.def.bossStyle ?? 'classic';
+    const kx = style === 'sweep' ? 270 + 200 * Math.sin((s.boss.t + 0.7) * (2 * Math.PI / 6) * (s.boss.enraged ? 1.4 : 1))
+      : (style === 'dash' || style === 'teleport') && s.boss.tele > 0 ? s.boss.targetX : k.x;
+    const gateNear = best && Math.abs(best.x + best.w / 2 - kx) < 140;
+    return k.y > 430 || !gateNear ? kx : best.x + best.w / 2;
   }
   // priority targets a human would go for: a Thief on a gate, a Healer
   const vip = s.grumps.find(e => (e.kind === 'thief' && e.target?.blocked) || e.kind === 'healer');

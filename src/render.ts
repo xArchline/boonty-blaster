@@ -138,6 +138,12 @@ export class Renderer {
         this.parts.push({ x: e.x, y: e.y - 16, vx: 0, vy: -50, life: 1.2, max: 1.2, color: C.yel200, r: 26, text: 'GATE CAPTURED!' });
       } else if (e.type === 'gateLost') {
         this.parts.push({ x: e.x, y: e.y - 40, vx: 0, vy: -40, life: 1, max: 1, color: '#fff', r: 22, text: 'Gate lost!' });
+      } else if (e.type === 'teleport') {
+        this.ring(e.x, e.y, C.lav500, 120);
+        this.burst(e.x, e.y, 18, [C.lav500, C.lav200, '#fff'], 260);
+      } else if (e.type === 'dash') {
+        this.shake = Math.min(12, this.shake + 7);
+        this.burst(e.x, e.y + 40, 10, ['#C9A36B', '#fff'], 200);
       } else if (e.type === 'thaw') {
         // ice shatters: shards fly off
         this.burst(e.x, e.y, 10, ['#BFE9FF', '#fff', C.blue500], 220);
@@ -303,6 +309,23 @@ export class Renderer {
         g.globalAlpha = 1;
       }
       if (e.kind === 'big') this.bar(e.x - 26, e.y - e.r - 16, 52, 8, e.hp / e.maxHp, C.or900);
+      if (e.kind === 'king' && s.boss.tele > 0) {
+        const tx = s.boss.targetX;
+        if (s.def.bossStyle === 'teleport') {
+          // the Trickster's ghost: where he'll blink to
+          g.save(); g.globalAlpha = 0.3 + 0.2 * Math.sin(this.t * 25);
+          g.drawImage(spr, tx - size / 2, e.y - size / 2, size, size);
+          g.restore();
+          g.strokeStyle = C.lav500; g.lineWidth = 4; g.setLineDash([8, 8]);
+          g.beginPath(); g.arc(tx, e.y, e.r + 14, 0, Math.PI * 2); g.stroke(); g.setLineDash([]);
+        } else if (s.def.bossStyle === 'dash') {
+          // the Charger's red arrow: where he'll charge
+          const dir = Math.sign(tx - e.x) || 1;
+          g.strokeStyle = 'rgba(255,74,24,.85)'; g.fillStyle = 'rgba(255,74,24,.85)'; g.lineWidth = 8; g.lineCap = 'round';
+          g.beginPath(); g.moveTo(e.x + dir * (e.r + 6), e.y); g.lineTo(tx - dir * 22, e.y + 20); g.stroke();
+          g.beginPath(); g.moveTo(tx, e.y + 20); g.lineTo(tx - dir * 26, e.y + 4); g.lineTo(tx - dir * 26, e.y + 36); g.closePath(); g.fill();
+        }
+      }
       if (e.kind === 'king' && s.boss.shieldT > 0) {
         // golden shield bubble
         g.save();

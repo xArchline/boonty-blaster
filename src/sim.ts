@@ -21,14 +21,14 @@ export interface Bumper { x: number; y: number; r: number; flash: number }
 export interface Castle { x: number; y: number; w: number; h: number; hp: number; maxHp: number; flash: number }
 export interface Roller { x: number; y: number; r: number; hit: Grump[] }
 export interface Balloon { x: number; y: number; sx: number; sy: number; tx: number; ty: number; t: number }
-export interface BossAI { shieldT: number; shieldCd: number; moveCd: number; enraged: boolean }
+export interface BossAI { shieldT: number; shieldCd: number; moveCd: number; enraged: boolean; t: number; tele: number; targetX: number }
 
 export type Phase = 'playing' | 'won' | 'lost';
 export type GameEvent = {
   type: 'pop' | 'bigPop' | 'gate' | 'trap' | 'castleHit' | 'heart' | 'rush' | 'boss' | 'bossDown' | 'won' | 'lost'
     | 'super' | 'superReady' | 'blast' | 'shield' | 'shieldHit' | 'enrage' | 'rollerHit'
     | 'gateUp' | 'mega' | 'wallHit' | 'wallBreak' | 'bump' | 'split' | 'finale' | 'lockHit' | 'unlock' | 'wallChew'
-    | 'thaw' | 'armorHit' | 'armorBreak' | 'steal' | 'heal' | 'carrier' | 'capture' | 'gateLost';
+    | 'thaw' | 'armorHit' | 'armorBreak' | 'steal' | 'heal' | 'carrier' | 'capture' | 'gateLost' | 'teleport' | 'dash';
   x: number; y: number; value?: number;
 };
 
@@ -100,7 +100,7 @@ export function createState(level: number, hero: Hero = 'knight', seed = level *
     hearts: def.hearts + up.hearts,
     spawnCd: 1.5, groups: 0, rushCd: def.rushEvery * 0.7, carrierCd: (def.carrierEvery ?? 0) * 0.5,
     charge: 0, goldT: 0, freezeT: 0, rollers: [], balloons: [],
-    king: null, boss: { shieldT: 0, shieldCd: def.bossShieldEvery, moveCd: 1.5, enraged: false },
+    king: null, boss: { shieldT: 0, shieldCd: def.bossShieldEvery, moveCd: 1.5, enraged: false, t: 0, tele: 0, targetX: W / 2 },
     events: [], rand,
   };
   if (def.boss) {
@@ -311,7 +311,34 @@ function updateKing(s: State, e: Grump, dt: number) {
       s.events.push({ type: 'shield', x: e.x, y: e.y });
     }
   }
-  // strafe to a new spot every so often so the player has to track him
+  b.t += dt;
+  const style = d.bossStyle ?? 'classic';
+  if (style === 'sweep') {
+    // THE SWEEPER: smooth, predictable side-to-side sway; lead your shots
+    e.x = W / 2 + 200 * Math.sin(b.t * (2 * Math.PI / 6) * rage);
+    return;
+  }
+  if (style === 'dash' || style === 'teleport') {
+    // THE CHARGER / THE TRICKSTER: pick a spot, show it (tele), then go there fast / blink there
+    if (b.tele > 0) {
+      b.tele -= dt;
+      if (b.tele <= 0) {
+        if (style === 'teleport') { e.x = b.targetX; s.events.push({ type: 'teleport', x: e.x, y: e.y }); }
+        else { e.laneX = b.targetX; e.y += 20; s.events.push({ type: 'dash', x: e.x, y: e.y }); }
+      }
+    } else if ((b.moveCd -= dt) <= 0) {
+      // never pick a spot too close to where he is, so every move matters
+      let x = 70 + s.rand() * (W - 140);
+      if (Math.abs(x - e.x) < 120) x = e.x < W / 2 ? Math.min(W - 70, x + 180) : Math.max(70, x - 180);
+      b.targetX = x;
+      b.tele = style === 'teleport' ? 0.7 : 0.55;
+      b.moveCd = (style === 'teleport' ? 2.8 : 2.2) / rage;
+    }
+    const dx = e.laneX - e.x;
+    if (style === 'dash') e.x += Math.sign(dx) * Math.min(Math.abs(dx), 620 * dt);
+    return;
+  }
+  // CLASSIC: strafe to a new spot every so often so the player has to track him
   b.moveCd -= dt;
   if (b.moveCd <= 0) {
     e.laneX = 70 + s.rand() * (W - 140);

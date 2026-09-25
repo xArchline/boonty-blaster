@@ -53,3 +53,11 @@ Feedback (level 29; build: More Boonties 15, Power 12, Super Charge 6, Hearts 0)
 - New: Gate Carriers (37: pop both carriers to capture their ×3 gate), Twin Lanes (42: stone divider splits the field). Both join the random mix afterwards. 33 tests.
 - "Boontys" became "Boonties" everywhere.
 - Release agent: relative base path, PWA (manifest, icons, offline service worker), GitHub Actions Pages workflow, docs/DEPLOY.md with the store path via Capacitor. The build is verified served from a subpath: no 404s, service worker registered. The local branch is renamed to `main`.
+
+## 2026-09-25: Laury's M6 feedback → M6.1 (published)
+Feedback: "Fun overall, I've become very good but I see difficulty. Bosses repeat, and their difficulty is random: if he goes behind the ×3 I win, otherwise impossible, so I restart until he takes the right path. Stone column lanes were nice, have more of them. OK to publish on GitHub, public. Ads later (from level 25, remove by donation, ads for coins). God level at 48 (upgrades 24/21/15/4)."
+- **Published:** https://xarchline.github.io/boonty-blaster/ (public repo xArchline/boonty-blaster, fresh history without font files, font from a CI secret, deployed on every push).
+- **Bosses:** 4 styles (Classic, Sweeper, Charger with arrow, Trickster with ghost). The duel ×3 slides across the field. HP is derived from firepower × fight length (the old formula made late Kings near-impossible). The bot now anticipates like a human.
+- **Late game:** steeper curve (1 + (n−12)/24), tougher regular Grumps. With Laury's level-48 build, the bots win 33–100% per level instead of ~90%.
+- **Twin Lanes:** more frequent after 42, especially right after a boss.
+- **Ads:** explained in docs/MONETIZATION.md, not implemented.

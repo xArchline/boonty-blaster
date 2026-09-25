@@ -250,6 +250,20 @@ describe('sim', () => {
     expect(s.walls).toContain(div);
   });
 
+  it('boss styles: the Trickster blinks to the telegraphed spot, the Charger dashes there', () => {
+    for (const lvl of [15, 30]) {
+      const s = createState(lvl);
+      const k = s.king!;
+      s.boss.shieldCd = 99;
+      s.boss.moveCd = 0;
+      run(s, 1 / 60);
+      const target = s.boss.targetX;
+      expect(s.boss.tele).toBeGreaterThan(0);
+      run(s, 1.2);
+      expect(Math.abs(k.x - target)).toBeLessThan(5);
+    }
+  });
+
   it('a splitter pops into three Zippies', () => {
     const s = createState(2);
     s.spawnCd = 999;

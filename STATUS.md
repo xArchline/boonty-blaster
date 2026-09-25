@@ -3,31 +3,30 @@
 Last updated: 24 Sep 2026
 
 ## Status
-Phase: M6 (harder progression, carriers + twin lanes, release prep). Waiting on Laury: playtest + publishing decision
-Objective: Harder late game, more mechanics, host online
+Phase: M6.1 (published online, boss styles, harder late game). Waiting on Laury's playtest
+Objective: Laury's M6 feedback
 Orchestrator: PAUSED until Laury's feedback
 Active agents: none
 
-## Parallel work (this round)
-- Release agent: PWA + GitHub Pages workflow + docs/DEPLOY.md. DONE, integrated and verified from a subpath
+## Live
+https://xarchline.github.io/boonty-blaster/ (every push to `main` on github.com/xArchline/boonty-blaster redeploys, after the tests pass)
 
 ## Completed
-- M1–M5.1 (see PROGRESS)
-- Difficulty follows your real power (blended with the typical player); Grumps get tougher with levels; late pressure
-- Gate Carriers (level 37), Twin Lanes (level 42)
-- "Boonties" plural
-- Installable web app (PWA, offline), automatic deploy to GitHub Pages ready (nothing published yet)
+- M1–M6 (see PROGRESS)
+- Published (public repo, fonts via CI secret, PWA installable)
+- Bosses: 4 learnable styles, sliding ×3, fair HP
+- Harder late game; Twin Lanes more often
+- docs/MONETIZATION.md: how ads, rewarded ads and "remove ads" support would work (later)
 
 ## Waiting on Laury
-1. **Playtest:** continue from level 29. Is it still god mode? Can you see the Iron/Thief/Healer Grumps now? Levels 37 and 42 bring the new mechanics
-2. **Publishing decision** (nothing is online yet): repo `xArchline/boonty-blaster`, public or private? The Delight font files shouldn't be public in the source. Recommended: public repo without the font files; the font is stored as a GitHub secret and added at build time.
-3. **Stores:** possible via Capacitor (see docs/DEPLOY.md). Needs an Apple Developer account ($99/yr) + a Mac with Xcode for iOS, and Google Play ($25 once) for Android.
+1. **Play online:** https://xarchline.github.io/boonty-blaster/ (a new site means a fresh save there; your local save stays on localhost). On a phone: Share → Add to Home Screen.
+2. **Bosses:** do the 4 styles feel different and fair? Is winning skill now, not path luck?
+3. **Level 48+ locally:** still god mode?
 
 ## Tests
-- `npm test`: 33/33. lint, tsc, build: pass. `npm run playtest`: no errors
-- Production build served from /boonty-blaster/: no 404s, service worker OK, playable
+- `npm test`: 34/34. lint, tsc, build: pass. CI on GitHub: tests + build + deploy green
+- Boss screenshots (Sweeper, Trickster ghost, Charger arrow): no errors
 
 ## Next
-1. Publish once Laury decides (create repo, push, enable Pages)
-2. Tune from the playtest
-3. If stores: Capacitor setup, icons/splash, privacy policy page
+1. Tune from feedback
+2. Later: Android app via Capacitor, then ads/donations (docs/MONETIZATION.md)

@@ -12,6 +12,8 @@ export interface GateDef {
   lock?: number; // locked door: absorbs minis until this much damage breaks the padlock, then it's a normal gate
 }
 
+export type BossStyle = 'classic' | 'sweep' | 'dash' | 'teleport';
+
 export interface WallDef { x: number; y: number; w: number; h: number; hp: number }
 export interface BumperDef { x: number; y: number; r: number }
 
@@ -32,6 +34,7 @@ export interface LevelDef {
   bossSpeed: number; // px/s forward
   bossStrafe: number; // px/s sideways
   bossShieldEvery: number; // seconds between golden-shield stomps
+  bossStyle?: BossStyle; // how the King moves in this duel
   rampUp: number; // spawn speed-up as the castle loses HP (0 = none, 1 = twice as fast at 0 HP)
   intro?: string; // shown at level start when a level brings something new
   walls?: WallDef[]; // crates that block minis until smashed (Grumps walk over them)
@@ -115,8 +118,8 @@ const handmade: LevelDef[] = [
   // 10: boss with rushes
   {
     ...base, boss: true, bossHp: 480, bossSpeed: 14, bossStrafe: 100, bossShieldEvery: 7,
-    intro: 'KING GRUMP is back, and angrier!',
-    gates: [{ x: 40, y: 580, w: 170, mul: 2, speed: 80, range: 290 }, { x: 330, y: 400, w: 160, mul: 3 }, { x: 40, y: 400, w: 150, mul: 0.5 }],
+    bossStyle: 'sweep', intro: 'THE SWEEPER: King Grump sways side to side. Lead your shots!',
+    gates: [{ x: 40, y: 580, w: 170, mul: 2, speed: 80, range: 290 }, { x: 20, y: 400, w: 160, mul: 3, speed: 55, range: 340 }],
   },
 ];
 
@@ -177,6 +180,18 @@ const handmadeLate: Record<number, LevelDef> = {
   },
 };
 
+// Some styles are harder to hit than others, so their King has less HP
+const STYLE_HP: Record<BossStyle, number> = { classic: 1.35, sweep: 0.75, dash: 1, teleport: 0.95 };
+
+// Duels rotate through the King's fighting styles (from level 15 on)
+const BOSS_STYLES: BossStyle[] = ['dash', 'teleport', 'classic', 'sweep'];
+const BOSS_INTRO: Record<BossStyle, string> = {
+  sweep: 'THE SWEEPER: he sways side to side. Lead your shots!',
+  dash: 'THE CHARGER: watch the red arrow, he charges there!',
+  teleport: 'THE TRICKSTER: his ghost shows where he blinks next!',
+  classic: 'KING GRUMP returns!',
+};
+
 function rng(seed: number) {
   let s = seed * 9301 + 49297;
   return () => ((s = (s * 16807) % 2147483647) / 2147483647);
@@ -200,17 +215,19 @@ export function levelDef(n: number, up?: Upgrades): LevelDef {
   // On top of that, difficulty comes in waves of 5: right after a boss you feel like a god, then it climbs to the next King.
   const typical = expectedUpgrades(n);
   const mine = up ?? typical;
-  const late = 1 + Math.max(0, n - 12) / 40; // levels keep getting tougher the further you go
-  const f = (Math.sqrt(streamDps(typical) * streamDps(mine)) / TUNED_DPS) * wave(n) * late;
+  const late = 1 + Math.max(0, n - 12) / 24; // levels keep getting tougher the further you go
+  const dps = Math.sqrt(streamDps(typical) * streamDps(mine));
+  const f = (dps / TUNED_DPS) * wave(n) * late;
   // Regular Grumps need more hits the further you go (about 2 hits by level 40 on a normal wave)
   const dmg = Math.sqrt(damage(typical.power) * damage(mine.power));
-  const minionHp = Math.max(1, Math.round(dmg * (0.6 + n / 34) * Math.sqrt(wave(n)) * 10) / 10);
+  const minionHp = Math.max(1, Math.round(dmg * (0.6 + n / 26) * Math.sqrt(wave(n)) * 10) / 10);
   const p = Math.min(1, f); // Grump pressure never goes above the tuned level
   return {
     ...d,
     castleHp: Math.round(d.castleHp * f),
     minionHp,
-    bossHp: Math.round(d.bossHp * (f < 1 ? Math.pow(f, 1.25) : f)), // a thin stream misses a dodging King more than linearly
+    // King HP = your firepower x a target fight length (about 15 s early, up to 22 s later; gates add ~x1.6)
+    bossHp: d.boss ? Math.round(dps * 1.6 * (14 + Math.min(8, n / 8)) * STYLE_HP[d.bossStyle ?? 'classic']) : 0,
     bigHp: Math.max(4, Math.round(d.bigHp * f)),
     spawnInterval: d.spawnInterval / Math.pow(p, 0.7),
     rushSize: Math.max(4, Math.round(d.rushSize * Math.sqrt(p))),
@@ -228,16 +245,19 @@ function rawLevel(n: number): LevelDef {
   if (n % 5 === 0) {
     // boss duel every 5 levels, a bit meaner each time
     const k = n / 5 - 2; // 1 at level 15
+    const style = BOSS_STYLES[k % 4];
     return {
       ...base, boss: true, bossHp: 420 + 30 * k, bossSpeed: Math.min(17, 14 + 0.5 * k), bossStrafe: Math.min(150, 100 + 8 * k), bossShieldEvery: Math.max(4.5, 7 - 0.4 * k),
-      intro: 'KING GRUMP returns!',
-      // same fair layout every duel; the King himself is what gets harder
-      gates: [{ x: 40, y: 590, w: 170, mul: 2, speed: 80, range: 290 }, { x: 330, y: 410, w: 160, mul: 3 }],
+      bossStyle: style,
+      intro: BOSS_INTRO[style],
+      // the x3 slides across the whole field, so lining it up with the King is skill, not luck
+      gates: [{ x: 40, y: 590, w: 170, mul: 2, speed: 80, range: 290 }, { x: 20, y: 410, w: 160, mul: 3, speed: 55, range: 340 }],
     };
   }
   // Each level mixes one field feature with one enemy flavour, so consecutive levels feel different.
-  const fields = ['traps', 'grow', 'mega', 'walls', 'bumpers', 'lock', ...(n > 42 ? ['twin'] : [])];
-  const field = fields[Math.floor(r() * fields.length)];
+  const fields = ['traps', 'grow', 'mega', 'walls', 'bumpers', 'lock', ...(n > 42 ? ['twin', 'twin'] : [])];
+  // Twin Lanes also show up often in the short levels right after a boss
+  const field = n > 42 && n % 5 <= 2 && r() < 0.5 ? 'twin' : fields[Math.floor(r() * fields.length)];
   // later Grump types join the mix once they've been introduced (22, 27, 32)
   const unlocked = (['shield', 'thief', 'healer'] as const).filter((_, i) => n > 22 + i * 5);
   const enemies = ['rush', 'zippy', 'big', 'splitter', ...unlocked, ...(n > 37 ? ['carrier'] : [])];
