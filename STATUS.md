@@ -3,31 +3,28 @@
 Last updated: 24 Sep 2026
 
 ## Status
-Phase: M7 (visual polish + mid-game balance). Published. Waiting on Laury's playtest (near end of dev)
-Objective: Laury's M6.1 feedback: nicer hero sprite, storybook menus, harder from ~level 10
-Orchestrator: PAUSED until Laury's feedback
+Phase: PAUSED. Laury is happy with the current state ("l'état actuel me convient parfaitement")
+Objective: none active; resume from "Next steps" when Laury asks
+Orchestrator: STOPPED at Laury's request (2026-09-25)
 Active agents: none
 
 ## Live
-https://xarchline.github.io/boonty-blaster/ (redeploys on every push to `main`)
+https://xarchline.github.io/boonty-blaster/ (repo github.com/xArchline/boonty-blaster; every push to `main` runs tests + build + deploy)
 
-## Parallel work (this round)
-- UI agent: storybook wood/parchment redesign of the title and all menus. DONE (40/40 E2E checks)
+## Completed (summary; details in docs/PROGRESS.md)
+- Boonty Blaster: hold to fire, drag to aim, multiplier gates, castle + Grumps, 3 hearts
+- 4 heroes with SUPERs, boss duels in 4 styles, 8 landscapes, ~15 enemy/field mechanics introduced up to level 42 then remixed
+- Gold + unlimited upgrades, difficulty waves (god moments after bosses), difficulty blended with the player's power
+- Storybook UI (title painting, wood/parchment menus), pause, settings + full reset, music + SFX, PWA (offline, installable)
 
-## Completed
-- M1–M6.1 (see PROGRESS)
-- Detailed hero hedgehog + wooden brass-banded cannon; balloon no longer clipped; SUPER button fills like a gauge
-- Title: Laury's forest painting + carved wooden sign; parchment/wood panels everywhere
-- Balance from level 8: steeper climb, then gentler; crates funnel Grumps into gaps; fairer rush/Zippy/special HP
+## Next steps (when Laury resumes)
+1. **Menu colour:** Laury finds the menus "a bit too brown". Lighten or recolour the wood/parchment toward the brand palette (lavender/yellow accents), keeping the storybook style. The only change Laury asked for.
+2. Keep an eye on the balance from level ~10 (goal: lose a few times, then upgrade; challenge not constant).
+3. Android app via Capacitor (docs/DEPLOY.md): needs a Google Play account ($25).
+4. Ads from level 25, "remove ads" support, rewarded ads for gold (docs/MONETIZATION.md).
 
-## Waiting on Laury
-1. On the phone (same link): do the new menus and the hero look right?
-2. From ~level 10: do you now lose a few times and need to upgrade, without it being constant?
-3. Anything left before calling it done?
+## Tests (last run)
+- `npm test`: 35/35. lint, tsc, build: pass. UI E2E: 40/40 at 360×640 and 390×844. Live site verified (font, gameplay, no errors)
 
-## Tests
-- `npm test`: 35/35. lint, tsc, build: pass. UI E2E: 40/40 at 360×640 and 390×844. `npm run playtest`: no errors
-
-## Next
-1. Final tuning from feedback
-2. Later: Android (Capacitor), ads/donations (docs/MONETIZATION.md)
+## Notes
+- Never push the local branch `archive/pre-publish`: its history contains the licensed font files. The font reaches CI through the secret `DELIGHT_BLACK_WOFF2_B64`.

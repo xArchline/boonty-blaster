@@ -67,3 +67,6 @@ Feedback: "Strong but challenged at level 55, died once, all good. The link work
 - Hero art: a detailed hedgehog (cream-tipped two-layer quills, glossy eyes, blush, open smile, waving arms), a wooden cannon with brass bands and spoked wheels, a bigger hero. Balloon clipping fixed (sprite padding). SUPER button fills like a gauge.
 - Balance: the late multiplier starts at level 8 (steeper to 30, gentler after), softer post-boss dip. Found and fixed: Grumps piling up unshootable behind crates (they now walk around to the gap), rushes too tough at high minion HP (rush Grumps ~1 hit), Zippies fast and tough (now half HP), Iron/Splitter/Thief/Healer HP tied to Big HP (now multiples of a regular Grump).
 - UI agent: storybook/wooden redesign of the title and every menu, with Laury's reference art as the title backdrop.
+
+## 2026-09-25: Pause
+Laury: "l'état actuel me convient parfaitement, peut-être le menu un peu trop orienté sur le marron". Development stopped at Laury's request. Next steps are in STATUS.md (menu less brown first, then Android and ads when wanted).
