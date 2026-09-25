@@ -21,52 +21,70 @@
   <canvas id="game"></canvas>
 
   <section id="title" class="screen">
-    <img class="logo" src="/assets/logo-white.svg" alt="Boonty">
-    <h1>BLASTER</h1>
-    <p>Hold to fire, drag to aim. Don't let a Grump cross your line!</p>
-    <div class="pick-label">CHOOSE YOUR HERO</div>
-    <div id="heroes" class="heroes"></div>
-    <p id="hero-power" class="power"></p>
-    <button id="play">PLAY</button>
-    <button id="new-game" class="secondary" hidden>NEW GAME · LEVEL 1</button>
+    <div class="title-main">
+      <div class="title-top">
+        <div class="sign">
+          <img class="logo" src="/assets/logo-white.svg" alt="Boonty">
+          <h1>BLASTER</h1>
+        </div>
+        <p class="tagline">Hold to fire, drag to aim. Don't let a Grump cross your line!</p>
+      </div>
+      <div class="title-bottom">
+        <div class="parchment picker">
+          <div class="pick-label">CHOOSE YOUR HERO</div>
+          <div id="heroes" class="heroes"></div>
+          <p id="hero-power" class="power"></p>
+        </div>
+        <button id="play" class="cta">PLAY</button>
+        <button id="new-game" class="secondary" hidden>NEW GAME · LEVEL 1</button>
+      </div>
+    </div>
     <div class="shop"></div>
   </section>
 
-  <section id="win" class="screen" hidden>
+  <section id="win" class="screen menu">
     <img id="win-img" class="hero small" src="/assets/boonty-party.webp" alt="">
-    <h2 id="win-title">Level cleared!</h2>
-    <div id="win-gold" class="reward big"><span class="coin"></span><span class="amount">+0</span></div>
-    <p id="win-sub"></p>
-    <button id="next">NEXT LEVEL</button>
+    <div class="board">
+      <h2 id="win-title">Level cleared!</h2>
+      <div id="win-gold" class="reward big"><span class="coin"></span><span class="amount">+0</span></div>
+      <p id="win-sub"></p>
+    </div>
+    <button id="next" class="cta">NEXT LEVEL</button>
     <div class="shop"></div>
     <button id="menu-win" class="secondary">MENU</button>
   </section>
 
-  <section id="lose" class="screen" hidden>
+  <section id="lose" class="screen menu">
     <img class="hero small" src="/assets/boonty-hi.webp" alt="">
-    <h2>So close!</h2>
-    <div id="lose-gold" class="reward"><span class="coin"></span><span class="amount">+0</span></div>
-    <p id="lose-sub"></p>
-    <button id="retry">TRY AGAIN</button>
+    <div class="board">
+      <h2>So close!</h2>
+      <div id="lose-gold" class="reward"><span class="coin"></span><span class="amount">+0</span></div>
+      <p id="lose-sub"></p>
+    </div>
+    <button id="retry" class="cta">TRY AGAIN</button>
     <div class="shop"></div>
     <button id="restart" class="secondary">START OVER · LEVEL 1</button>
     <button id="menu-lose" class="secondary">MENU</button>
   </section>
 
-  <section id="pause" class="screen" hidden>
-    <h2>Paused</h2>
-    <button id="resume">RESUME</button>
-    <button id="restart-level" class="secondary">RESTART LEVEL</button>
-    <button id="menu-pause" class="secondary">MENU</button>
+  <section id="pause" class="screen menu">
+    <div class="board">
+      <h2>Paused</h2>
+      <button id="resume" class="cta">RESUME</button>
+      <button id="restart-level" class="secondary">RESTART LEVEL</button>
+      <button id="menu-pause" class="secondary">MENU</button>
+    </div>
   </section>
 
-  <section id="settings" class="screen" hidden>
-    <h2>Settings</h2>
-    <button id="mute-2" class="secondary" type="button">SOUND ON</button>
-    <button id="reset" class="secondary danger" type="button">RESET ALL PROGRESS</button>
-    <p class="note">Back to level 1 with 0 gold, no upgrades and only Sir Boonty.</p>
-    <p id="reset-done" class="done" hidden>Progress reset. Fresh start!</p>
-    <button id="settings-back">BACK</button>
+  <section id="settings" class="screen menu">
+    <div class="board">
+      <h2>Settings</h2>
+      <button id="mute-2" class="secondary" type="button">SOUND ON</button>
+      <button id="reset" class="secondary danger" type="button">RESET ALL PROGRESS</button>
+      <p class="note">Back to level 1 with 0 gold, no upgrades and only Sir Boonty.</p>
+      <p id="reset-done" class="done" hidden>Progress reset. Fresh start!</p>
+      <button id="settings-back" class="cta">BACK</button>
+    </div>
   </section>
 
   <button id="pause-btn" class="pause-btn" type="button" aria-label="Pause" hidden><i></i><i></i></button>

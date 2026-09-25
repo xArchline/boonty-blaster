@@ -19,7 +19,11 @@ export function botAim(s: State, skill = 1) {
   if (vip && s.rand() < skill) return vip.x;
   const threat = s.grumps.reduce<typeof s.grumps[number] | null>((a, e) => (e.y > 480 && (!a || e.y > a.y) ? e : a), null);
   if (threat && s.rand() < skill) return threat.x;
-  const best = s.gates.reduce((a, g) => (g.mul > a.mul ? g : a), s.gates[0]);
+  // a human breaks padlocks open when things are calm, and doesn't feed the MEGA gate by accident
+  const locked = s.gates.find(g => g.lockHp > 0);
+  if (locked && s.rand() < skill) return locked.x + locked.w / 2;
+  const usable = s.gates.filter(g => !g.mega && !g.blocked && g.y > -1000);
+  const best = usable.reduce((a, g) => (g.mul > a.mul ? g : a), usable[0]);
   return best ? best.x + best.w / 2 : s.castle.x;
 }
 

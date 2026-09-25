@@ -140,7 +140,7 @@ const handmadeLate: Record<number, LevelDef> = {
     gates: [{ x: 180, y: 590, w: 180, mul: 2 }, { x: 40, y: 380, w: 150, mul: 3 }, { x: 350, y: 380, w: 150, mul: 3 }],
   },
   14: {
-    ...late, castleHp: 1250, bigEvery: 3, rushEvery: 12, intro: 'MEGA GATE: 5 Boonties fuse into one giant. It pierces Grumps but skips gates!',
+    ...late, castleHp: 1250, bigEvery: 5, rushEvery: 12, intro: 'MEGA GATE: 5 Boonties fuse into one giant. It pierces Grumps but skips gates!',
     gates: [{ x: 30, y: 580, w: 170, mul: 1, mega: true }, { x: 330, y: 410, w: 160, mul: 3 }],
   },
   16: {
@@ -204,7 +204,7 @@ const TUNED_DPS = 1 / 0.085;
 /** HP multiplier by position in the 5-level cycle (boss on every 5th). Flat during the tutorial levels. */
 export function wave(n: number) {
   if (n <= 5) return 1;
-  return [0.95, 0.45, 0.65, 0.8, 0.95][n % 5];
+  return [0.95, 0.55, 0.7, 0.85, 0.95][n % 5];
 }
 
 /** Level n (1-based), scaled to the expected firepower at that point. Same result every time for a given n. */
@@ -215,7 +215,8 @@ export function levelDef(n: number, up?: Upgrades): LevelDef {
   // On top of that, difficulty comes in waves of 5: right after a boss you feel like a god, then it climbs to the next King.
   const typical = expectedUpgrades(n);
   const mine = up ?? typical;
-  const late = 1 + Math.max(0, n - 12) / 24; // levels keep getting tougher the further you go
+  // levels keep getting tougher: a steeper climb from level 8 to 30 (so you lose a few times and upgrade), then gentler
+  const late = n <= 30 ? 1 + Math.max(0, n - 8) / 20 : 2.1 + (n - 30) / 40;
   const dps = Math.sqrt(streamDps(typical) * streamDps(mine));
   const f = (dps / TUNED_DPS) * wave(n) * late;
   // Regular Grumps need more hits the further you go (about 2 hits by level 40 on a normal wave)

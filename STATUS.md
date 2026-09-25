@@ -3,30 +3,31 @@
 Last updated: 24 Sep 2026
 
 ## Status
-Phase: M6.1 (published online, boss styles, harder late game). Waiting on Laury's playtest
-Objective: Laury's M6 feedback
+Phase: M7 (visual polish + mid-game balance). Published. Waiting on Laury's playtest (near end of dev)
+Objective: Laury's M6.1 feedback: nicer hero sprite, storybook menus, harder from ~level 10
 Orchestrator: PAUSED until Laury's feedback
 Active agents: none
 
 ## Live
-https://xarchline.github.io/boonty-blaster/ (every push to `main` on github.com/xArchline/boonty-blaster redeploys, after the tests pass)
+https://xarchline.github.io/boonty-blaster/ (redeploys on every push to `main`)
+
+## Parallel work (this round)
+- UI agent: storybook wood/parchment redesign of the title and all menus. DONE (40/40 E2E checks)
 
 ## Completed
-- M1–M6 (see PROGRESS)
-- Published (public repo, fonts via CI secret, PWA installable)
-- Bosses: 4 learnable styles, sliding ×3, fair HP
-- Harder late game; Twin Lanes more often
-- docs/MONETIZATION.md: how ads, rewarded ads and "remove ads" support would work (later)
+- M1–M6.1 (see PROGRESS)
+- Detailed hero hedgehog + wooden brass-banded cannon; balloon no longer clipped; SUPER button fills like a gauge
+- Title: Laury's forest painting + carved wooden sign; parchment/wood panels everywhere
+- Balance from level 8: steeper climb, then gentler; crates funnel Grumps into gaps; fairer rush/Zippy/special HP
 
 ## Waiting on Laury
-1. **Play online:** https://xarchline.github.io/boonty-blaster/ (a new site means a fresh save there; your local save stays on localhost). On a phone: Share → Add to Home Screen.
-2. **Bosses:** do the 4 styles feel different and fair? Is winning skill now, not path luck?
-3. **Level 48+ locally:** still god mode?
+1. On the phone (same link): do the new menus and the hero look right?
+2. From ~level 10: do you now lose a few times and need to upgrade, without it being constant?
+3. Anything left before calling it done?
 
 ## Tests
-- `npm test`: 34/34. lint, tsc, build: pass. CI on GitHub: tests + build + deploy green
-- Boss screenshots (Sweeper, Trickster ghost, Charger arrow): no errors
+- `npm test`: 35/35. lint, tsc, build: pass. UI E2E: 40/40 at 360×640 and 390×844. `npm run playtest`: no errors
 
 ## Next
-1. Tune from feedback
-2. Later: Android app via Capacitor, then ads/donations (docs/MONETIZATION.md)
+1. Final tuning from feedback
+2. Later: Android (Capacitor), ads/donations (docs/MONETIZATION.md)

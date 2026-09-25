@@ -125,8 +125,11 @@ const KIND = {
 function spawn(s: State, kind: GrumpKind, laneX: number, dy = 0) {
   const k = KIND[kind];
   const hp = kind === 'big' ? s.def.bigHp : kind === 'king' ? s.def.bossHp
-    : kind === 'splitter' || kind === 'thief' ? Math.max(3, Math.round(s.def.bigHp * 0.35))
-    : kind === 'healer' ? Math.max(2, Math.round(s.def.bigHp * 0.25)) : (s.def.minionHp ?? 1);
+    // special Grumps are measured in "regular Grumps", so they stay in proportion as levels scale
+    : kind === 'splitter' || kind === 'thief' ? Math.max(3, (s.def.minionHp ?? 1) * 3)
+    : kind === 'healer' ? Math.max(2, (s.def.minionHp ?? 1) * 2)
+    : kind === 'zippy' ? Math.max(1, (s.def.minionHp ?? 1) * 0.5) // fast OR tough, not both
+    : (s.def.minionHp ?? 1);
   s.grumps.push({
     x: s.castle.x + (kind === 'king' ? 0 : (s.rand() - 0.5) * 60), laneX, y: s.castle.y + s.castle.h + (kind === 'king' ? 40 : 10) + dy,
     r: k.r, hp, maxHp: hp,
@@ -134,7 +137,7 @@ function spawn(s: State, kind: GrumpKind, laneX: number, dy = 0) {
     kind, alive: true, hitT: 0,
   });
   const e = s.grumps[s.grumps.length - 1];
-  if (kind === 'shield') e.armor = e.maxArmor = Math.round(s.def.bigHp * 0.9); // an iron plank in front
+  if (kind === 'shield') e.armor = e.maxArmor = Math.max(6, Math.round((s.def.minionHp ?? 1) * 5)); // an iron plank in front
   if (kind === 'healer') e.healCd = 1;
   if (kind === 'thief') {
     // heads for your best working gate and sits on it
@@ -191,7 +194,8 @@ function spawnRush(s: State, announce = true) {
   for (let i = 0; i < n; i++) {
     spawn(s, 'grump', 40 + ((W - 80) * (i + 0.5)) / n, (i % 2) * 14);
     const e = s.grumps[s.grumps.length - 1];
-    e.hp = e.maxHp = Math.max(1, e.hp * 0.5); // a rush is about numbers, not toughness
+    e.hp = e.maxHp = Math.max(1, e.hp * 0.35); // a rush is about numbers, not toughness: a sweep, not a wall
+    e.speed *= 0.85;
   }
   if (announce) s.events.push({ type: 'rush', x: W / 2, y: s.castle.y + s.castle.h });
 }
@@ -517,6 +521,14 @@ export function step(s: State, dt: number) {
     for (const w of s.walls) {
       if (w.hp > 0 && Number.isFinite(w.maxHp) && e.x > w.x - e.r * 0.6 && e.x < w.x + w.w + e.r * 0.6 && e.y + e.r > w.y && e.y - e.r < w.y + w.h) {
         e.y = w.y - e.r;
+        // walk around the crate toward its nearest open end: crates funnel Grumps into the gaps
+        const leftEnd = w.x - e.r - 6, rightEnd = w.x + w.w + e.r + 6;
+        const canLeft = leftEnd > 20, canRight = rightEnd < W - 20;
+        if (canLeft || canRight) {
+          const goLeft = canLeft && (!canRight || e.x - leftEnd < rightEnd - e.x);
+          e.laneX = goLeft ? leftEnd : rightEnd;
+          if (!frozen) e.x += Math.sign(e.laneX - e.x) * Math.min(Math.abs(e.laneX - e.x), 70 * dt);
+        }
         if (!frozen) {
           if (Number.isFinite(w.maxHp)) w.hp -= w.maxHp * CHEW[e.kind] * dt;
           w.flash = Math.max(w.flash, 0.3);

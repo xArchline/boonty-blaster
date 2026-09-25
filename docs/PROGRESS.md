@@ -61,3 +61,9 @@ Feedback: "Fun overall, I've become very good but I see difficulty. Bosses repea
 - **Late game:** steeper curve (1 + (n−12)/24), tougher regular Grumps. With Laury's level-48 build, the bots win 33–100% per level instead of ~90%.
 - **Twin Lanes:** more frequent after 42, especially right after a boss.
 - **Ads:** explained in docs/MONETIZATION.md, not implemented.
+
+## 2026-09-25: Laury's M6.1 feedback → M7 (polish + balance)
+Feedback: "Strong but challenged at level 55, died once, all good. The link works on mobile. Make a nicer sprite for the Boonty at the bottom (the balloon one is cut). The main menu isn't pretty, see the example images; rework the UI in general. We're near the end of dev. Also harder from ~level 10 so I have to lose a few times to upgrade; challenge, but not constantly."
+- Hero art: a detailed hedgehog (cream-tipped two-layer quills, glossy eyes, blush, open smile, waving arms), a wooden cannon with brass bands and spoked wheels, a bigger hero. Balloon clipping fixed (sprite padding). SUPER button fills like a gauge.
+- Balance: the late multiplier starts at level 8 (steeper to 30, gentler after), softer post-boss dip. Found and fixed: Grumps piling up unshootable behind crates (they now walk around to the gap), rushes too tough at high minion HP (rush Grumps ~1 hit), Zippies fast and tough (now half HP), Iron/Splitter/Thief/Healer HP tied to Big HP (now multiples of a regular Grump).
+- UI agent: storybook/wooden redesign of the title and every menu, with Laury's reference art as the title backdrop.

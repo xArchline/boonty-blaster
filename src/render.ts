@@ -471,21 +471,57 @@ export class Renderer {
   private drawCannon(s: State) {
     const g = this.g;
     const x = s.cannonX;
-    const recoil = s.firing ? Math.sin(this.t * 45) * 2.5 : 0;
-    // barrel
-    g.fillStyle = C.lav900;
-    g.beginPath(); g.roundRect(x - 17, CANNON_Y - 52 + recoil, 34, 56, 12); g.fill();
-    g.fillStyle = C.lav500;
-    g.beginPath(); g.roundRect(x - 21, CANNON_Y - 56 + recoil, 42, 14, 7); g.fill();
-    // Boonty sitting at the controls
-    const hat = HAT[s.hero], gold = s.goldT > 0;
-    const hero = sprite('hero' + hat + gold, 34, this.px, (c, r) => hedgehog(c, r, { hat, gold }));
-    const heroBlink = sprite('heroBlink' + hat + gold, 34, this.px, (c, r) => hedgehog(c, r, { blink: true, hat, gold }));
+    const recoil = s.firing ? Math.abs(Math.sin(this.t * 30)) * 4 : 0;
+    const top = CANNON_Y - 60 + recoil, bottom = CANNON_Y + 14;
+    // carriage + two wheels
+    g.fillStyle = 'rgba(23,28,59,.25)';
+    g.beginPath(); g.ellipse(x, CANNON_Y + 44, 56, 12, 0, 0, Math.PI * 2); g.fill();
+    const wood = (x0: number, w: number) => {
+      const wg = g.createLinearGradient(x0, 0, x0 + w, 0);
+      wg.addColorStop(0, '#6E4523'); wg.addColorStop(0.45, '#C98B4C'); wg.addColorStop(1, '#6E4523');
+      return wg;
+    };
+    g.fillStyle = '#5A3A1E';
+    g.beginPath(); g.roundRect(x - 34, CANNON_Y + 4, 68, 30, 8); g.fill();
+    for (const sd of [-1, 1]) {
+      const wx = x + sd * 38, wy = CANNON_Y + 24, spin = (s.cannonX / 16) * sd;
+      g.fillStyle = '#6E4523'; g.beginPath(); g.arc(wx, wy, 17, 0, Math.PI * 2); g.fill();
+      g.strokeStyle = '#E0A94E'; g.lineWidth = 3; g.stroke();
+      g.strokeStyle = '#3E2612'; g.lineWidth = 3;
+      for (let k = 0; k < 4; k++) {
+        const a = spin + (k * Math.PI) / 4;
+        g.beginPath(); g.moveTo(wx - Math.cos(a) * 14, wy - Math.sin(a) * 14); g.lineTo(wx + Math.cos(a) * 14, wy + Math.sin(a) * 14); g.stroke();
+      }
+      g.fillStyle = '#F1BE00'; g.beginPath(); g.arc(wx, wy, 5, 0, Math.PI * 2); g.fill();
+    }
+    // wooden barrel with brass bands, pointing up the field
+    g.fillStyle = wood(x - 20, 40);
+    g.beginPath(); g.roundRect(x - 20, top, 40, bottom - top, 12); g.fill();
+    g.strokeStyle = '#4A2E15'; g.lineWidth = 2; g.stroke();
+    const brass = (y: number, h: number, w: number) => {
+      const bg = g.createLinearGradient(x - w / 2, 0, x + w / 2, 0);
+      bg.addColorStop(0, '#A8741C'); bg.addColorStop(0.4, '#FEE580'); bg.addColorStop(1, '#A8741C');
+      g.fillStyle = bg;
+      g.beginPath(); g.roundRect(x - w / 2, y, w, h, h / 2); g.fill();
+    };
+    brass(top + 22, 7, 44);
+    brass(bottom - 16, 7, 44);
+    // muzzle
+    brass(top - 4, 12, 50);
+    g.fillStyle = '#2A1A0C';
+    g.beginPath(); g.ellipse(x, top + 2, 15, 4, 0, 0, Math.PI * 2); g.fill();
+    if (s.firing) {
+      g.fillStyle = 'rgba(255,240,181,.8)';
+      g.beginPath(); g.arc(x, top - 6, 7 + Math.random() * 5, 0, Math.PI * 2); g.fill();
+    }
+    // Boonty in front of the cannon, waving while it fires
+    const hat = HAT[s.hero], gold = s.goldT > 0, wave = s.firing && Math.sin(this.t * 10) > 0;
+    const key = hat + gold + wave;
     const blink = this.t % 3.2 < 0.12;
-    const img = blink ? heroBlink : hero;
+    const img = sprite('hero' + key + blink, 38, this.px, (c, r) => hedgehog(c, r, { hat, gold, wave, blink }));
     const size = img.width / this.px;
     const bob = Math.sin(this.t * 4) * 1.5;
-    g.drawImage(img, x - size / 2, CANNON_Y + 34 - size / 2 + bob, size, size);
+    g.drawImage(img, x - size / 2, CANNON_Y + 62 - size / 2 + bob, size, size);
   }
 
   private drawParticles(dt: number, castleBarY: number) {
@@ -611,8 +647,12 @@ export class Renderer {
     if (img.complete && img.naturalWidth) {
       g.save();
       g.beginPath(); g.arc(0, 0, b.r - 7, 0, Math.PI * 2); g.clip();
-      g.globalAlpha = ready ? 1 : 0.55;
       g.drawImage(img, -b.r + 7, -b.r + 7, (b.r - 7) * 2, (b.r - 7) * 2);
+      // not charged yet: the empty part of the gauge is shaded, so the portrait "fills up" from the bottom
+      if (!ready) {
+        g.fillStyle = 'rgba(23,28,59,.6)';
+        g.fillRect(-b.r, -b.r, b.r * 2, (b.r * 2 - 14) * (1 - s.charge) + 7);
+      }
       g.restore();
     }
     // charge ring

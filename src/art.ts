@@ -11,64 +11,103 @@ type Ctx = CanvasRenderingContext2D;
 
 export type Hat = 'helmet' | 'balloon' | 'crown' | 'shades';
 
-export function hedgehog(g: Ctx, r: number, o: { blink?: boolean; happy?: boolean; gold?: boolean; hat?: Hat } = {}) {
+export function hedgehog(g: Ctx, r: number, o: { blink?: boolean; happy?: boolean; gold?: boolean; hat?: Hat; wave?: boolean } = {}) {
   if (o.hat === 'balloon') balloon(g, r * 0.95, -r * 1.55, r * 0.5, C.blue500);
-  // spikes: a fluffy crown behind the body (golden during King Boonty's super)
-  g.fillStyle = o.gold ? C.yel200 : '#ECE9F8';
-  g.strokeStyle = o.gold ? C.yel500 : '#C9C3EA';
-  g.lineWidth = Math.max(1, r * 0.05);
-  g.beginPath();
-  const n = 13;
-  for (let i = 0; i <= n; i++) {
-    const a = Math.PI * (1.05 + (i / n) * 0.9);
-    const a2 = Math.PI * (1.05 + ((i + 0.5) / n) * 0.9);
-    g.lineTo(Math.cos(a) * r * 0.95, Math.sin(a) * r * 0.95 - r * 0.05);
-    if (i < n) g.lineTo(Math.cos(a2) * r * 1.2, Math.sin(a2) * r * 1.2 - r * 0.05);
+  const detailed = r > 20; // the hero gets the full treatment; tiny minis stay light
+
+  // spikes: two layers of soft quills, cream-tipped like the Boonty renders (golden during King Boonty's super)
+  const quills = (radius: number, len: number, count: number, fill: string, tip: string) => {
+    for (let i = 0; i < count; i++) {
+      const a = Math.PI * (0.92 + (i / (count - 1)) * 1.16);
+      const bx = Math.cos(a) * radius, by = Math.sin(a) * radius * 0.95 - r * 0.05;
+      const tx = Math.cos(a) * (radius + len), ty = Math.sin(a) * (radius + len) * 0.95 - r * 0.05;
+      const nx = -Math.sin(a) * r * 0.16, ny = Math.cos(a) * r * 0.16;
+      const qg = g.createLinearGradient(bx, by, tx, ty);
+      qg.addColorStop(0, fill); qg.addColorStop(1, tip);
+      g.fillStyle = qg;
+      g.beginPath(); g.moveTo(bx - nx, by - ny); g.quadraticCurveTo(tx, ty, bx + nx, by + ny); g.closePath(); g.fill();
+    }
+  };
+  if (o.gold) {
+    quills(r * 0.82, r * 0.42, detailed ? 17 : 11, C.yel200, C.yel500);
+  } else {
+    quills(r * 0.8, r * (detailed ? 0.6 : 0.44), detailed ? 19 : 11, '#F1ECE4', '#CDB89A');
+    if (detailed) quills(r * 0.84, r * 0.36, 17, '#FFFFFF', '#E6DCCB');
   }
-  g.closePath();
-  g.fill();
-  g.stroke();
 
   // ears
+  g.strokeStyle = '#D9D1E8'; g.lineWidth = Math.max(1, r * 0.04);
   for (const s of [-1, 1]) {
     g.fillStyle = '#FFFFFF';
-    g.beginPath(); g.arc(s * r * 0.58, -r * 0.7, r * 0.22, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.beginPath(); g.ellipse(s * r * 0.6, -r * 0.66, r * 0.23, r * 0.21, s * 0.3, 0, Math.PI * 2); g.fill(); g.stroke();
     g.fillStyle = '#FFC2CF';
-    g.beginPath(); g.arc(s * r * 0.58, -r * 0.68, r * 0.12, 0, Math.PI * 2); g.fill();
+    g.beginPath(); g.ellipse(s * r * 0.6, -r * 0.64, r * 0.13, r * 0.11, s * 0.3, 0, Math.PI * 2); g.fill();
   }
 
-  // body
+  // body with a fluffy scalloped edge
   const grad = g.createRadialGradient(-r * 0.3, -r * 0.35, r * 0.1, 0, 0, r * 1.05);
   grad.addColorStop(0, '#FFFFFF');
-  grad.addColorStop(0.7, '#F7F5FD');
-  grad.addColorStop(1, '#DCD7F2');
+  grad.addColorStop(0.72, '#F8F6FD');
+  grad.addColorStop(1, '#DDD7EE');
   g.fillStyle = grad;
   g.beginPath(); g.ellipse(0, 0, r, r * 0.95, 0, 0, Math.PI * 2); g.fill();
-  g.strokeStyle = '#C9C3EA'; g.stroke();
-
-  // feet
-  g.fillStyle = '#FFC2CF';
-  for (const s of [-1, 1]) { g.beginPath(); g.ellipse(s * r * 0.36, r * 0.9, r * 0.17, r * 0.1, 0, 0, Math.PI * 2); g.fill(); }
-
-  // face
-  g.fillStyle = C.ink;
-  for (const s of [-1, 1]) {
-    if (o.blink || o.happy) {
-      g.strokeStyle = C.ink; g.lineWidth = r * 0.08; g.lineCap = 'round';
-      g.beginPath(); g.arc(s * r * 0.3, -r * 0.02, r * 0.11, Math.PI * 1.15, Math.PI * 1.85); g.stroke();
-    } else {
-      g.beginPath(); g.ellipse(s * r * 0.3, -r * 0.05, r * 0.13, r * 0.16, 0, 0, Math.PI * 2); g.fill();
-      g.fillStyle = '#fff';
-      g.beginPath(); g.arc(s * r * 0.3 + r * 0.05, -r * 0.11, r * 0.05, 0, Math.PI * 2); g.fill();
-      g.fillStyle = C.ink;
+  if (detailed) {
+    for (let i = 0; i < 14; i++) {
+      const a = Math.PI * (0.05 + (i / 13) * 0.9);
+      g.beginPath(); g.arc(Math.cos(a) * r * 0.93, Math.sin(a) * r * 0.88, r * 0.12, 0, Math.PI * 2); g.fill();
     }
+    // lighter belly
+    g.fillStyle = 'rgba(255,255,255,.9)';
+    g.beginPath(); g.ellipse(0, r * 0.42, r * 0.52, r * 0.4, 0, 0, Math.PI * 2); g.fill();
   }
-  g.fillStyle = 'rgba(255,140,170,.45)';
-  for (const s of [-1, 1]) { g.beginPath(); g.ellipse(s * r * 0.52, r * 0.18, r * 0.13, r * 0.08, 0, 0, Math.PI * 2); g.fill(); }
+  g.strokeStyle = 'rgba(160,150,200,.45)'; g.lineWidth = Math.max(1, r * 0.035);
+  g.beginPath(); g.ellipse(0, 0, r, r * 0.95, 0, 0, Math.PI * 2); g.stroke();
+
+  // little arms (the hero waves them), and feet
+  g.fillStyle = '#FFFFFF'; g.strokeStyle = '#D9D1E8'; g.lineWidth = Math.max(1, r * 0.04);
+  for (const s of [-1, 1]) {
+    const ay = o.wave ? r * 0.05 : r * 0.42;
+    g.beginPath(); g.ellipse(s * r * 0.86, ay, r * 0.15, r * 0.22, s * (o.wave ? -0.9 : 0.4), 0, Math.PI * 2); g.fill(); g.stroke();
+    g.fillStyle = '#FFC2CF';
+    g.beginPath(); g.ellipse(s * r * 0.9, ay + (o.wave ? -r * 0.14 : r * 0.14), r * 0.07, r * 0.06, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#FFFFFF';
+  }
+  g.fillStyle = '#FFC2CF';
+  for (const s of [-1, 1]) { g.beginPath(); g.ellipse(s * r * 0.36, r * 0.92, r * 0.18, r * 0.1, 0, 0, Math.PI * 2); g.fill(); }
+
+  // face: big glossy eyes, soft blush, pink nose, open smile
+  for (const s of [-1, 1]) {
+    const ex = s * r * 0.3, ey = -r * 0.06;
+    if (o.blink) {
+      g.strokeStyle = C.ink; g.lineWidth = r * 0.07; g.lineCap = 'round';
+      g.beginPath(); g.arc(ex, ey, r * 0.11, Math.PI * 1.15, Math.PI * 1.85); g.stroke();
+      continue;
+    }
+    const eg = g.createRadialGradient(ex - r * 0.03, ey - r * 0.04, r * 0.02, ex, ey, r * 0.18);
+    eg.addColorStop(0, '#3A3150'); eg.addColorStop(1, C.ink);
+    g.fillStyle = eg;
+    g.beginPath(); g.ellipse(ex, ey, r * 0.14, r * 0.17, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#fff';
+    g.beginPath(); g.arc(ex + r * 0.05, ey - r * 0.07, r * 0.055, 0, Math.PI * 2); g.fill();
+    if (detailed) { g.beginPath(); g.arc(ex - r * 0.05, ey + r * 0.07, r * 0.025, 0, Math.PI * 2); g.fill(); }
+  }
+  for (const s of [-1, 1]) {
+    const bg = g.createRadialGradient(s * r * 0.55, r * 0.18, 0, s * r * 0.55, r * 0.18, r * 0.18);
+    bg.addColorStop(0, 'rgba(255,130,160,.6)'); bg.addColorStop(1, 'rgba(255,130,160,0)');
+    g.fillStyle = bg;
+    g.beginPath(); g.arc(s * r * 0.55, r * 0.18, r * 0.18, 0, Math.PI * 2); g.fill();
+  }
   g.fillStyle = C.pink;
-  g.beginPath(); g.ellipse(0, r * 0.13, r * 0.09, r * 0.065, 0, 0, Math.PI * 2); g.fill();
-  g.strokeStyle = C.ink; g.lineWidth = Math.max(1, r * 0.06); g.lineCap = 'round';
-  g.beginPath(); g.arc(0, r * 0.2, r * 0.13, 0.25, Math.PI - 0.25); g.stroke();
+  g.beginPath(); g.ellipse(0, r * 0.12, r * 0.08, r * 0.06, 0, 0, Math.PI * 2); g.fill();
+  if (detailed || o.happy) {
+    g.fillStyle = '#5B2A3A';
+    g.beginPath(); g.moveTo(-r * 0.14, r * 0.22); g.quadraticCurveTo(0, r * 0.46, r * 0.14, r * 0.22); g.closePath(); g.fill();
+    g.fillStyle = '#FF8FA8';
+    g.beginPath(); g.ellipse(0, r * 0.34, r * 0.07, r * 0.045, 0, 0, Math.PI * 2); g.fill();
+  } else {
+    g.strokeStyle = C.ink; g.lineWidth = Math.max(1, r * 0.06); g.lineCap = 'round';
+    g.beginPath(); g.arc(0, r * 0.2, r * 0.13, 0.25, Math.PI - 0.25); g.stroke();
+  }
 
   if (o.hat === 'helmet') {
     // round knight helmet with a visor band and a plume
@@ -188,7 +227,7 @@ export function sprite(key: string, r: number, px: number, draw: (g: Ctx, r: num
   const id = `${key}:${r}:${px}`;
   let c = cache.get(id);
   if (!c) {
-    const pad = r * 1.5;
+    const pad = r * 2.3; // room for hats and balloons
     c = document.createElement('canvas');
     c.width = c.height = Math.ceil(pad * 2 * px);
     const g = c.getContext('2d')!;

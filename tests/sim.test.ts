@@ -181,7 +181,7 @@ describe('sim', () => {
   it('crates stop Grumps, who chew through them', () => {
     const s = createState(2);
     s.spawnCd = 999; s.gates = [];
-    s.walls = [{ x: 200, y: 500, w: 140, h: 30, hp: 100, maxHp: 100, flash: 0 }];
+    s.walls = [{ x: 0, y: 500, w: 540, h: 30, hp: 100, maxHp: 100, flash: 0 }]; // full width: no way around
     s.grumps.push({ x: 270, laneX: 270, y: 470, r: 26, hp: 99, maxHp: 99, speed: 60, kind: 'big', alive: true, hitT: 0 });
     run(s, 2);
     expect(s.grumps[0].y).toBeLessThan(500);
@@ -262,6 +262,15 @@ describe('sim', () => {
       run(s, 1.2);
       expect(Math.abs(k.x - target)).toBeLessThan(5);
     }
+  });
+
+  it('Grumps blocked by a crate walk around it through the gap', () => {
+    const s = createState(2);
+    s.spawnCd = 999; s.gates = [];
+    s.walls = [{ x: 150, y: 500, w: 240, h: 30, hp: 1e6, maxHp: 1e6, flash: 0 }];
+    s.grumps.push({ x: 300, laneX: 300, y: 470, r: 14, hp: 99, maxHp: 99, speed: 60, kind: 'grump', alive: true, hitT: 0 });
+    run(s, 4);
+    expect(s.grumps[0].y).toBeGreaterThan(530); // got past the crate row
   });
 
   it('a splitter pops into three Zippies', () => {
